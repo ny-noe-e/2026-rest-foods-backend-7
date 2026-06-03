@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/menus")
+
 public class MenuController {
     @Autowired
     private MenuService  menuService;
@@ -24,4 +26,13 @@ public class MenuController {
                 status(HttpStatus.OK).
                 body(menuService.getAllMenus());
     }
+
+    @GetMapping("/{menuId}")
+    public ResponseEntity<Menu> getMenuById(@PathVariable Long menuId) {
+
+        return ResponseEntity.
+                status(HttpStatus.OK).
+                body(menuService.getMenuById(menuId));
+    }
+
 }
