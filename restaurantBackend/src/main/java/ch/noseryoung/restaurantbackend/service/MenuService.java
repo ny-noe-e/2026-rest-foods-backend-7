@@ -26,5 +26,23 @@ public class MenuService {
     public Menu createMenu(Menu menu) {
         return repository.save(menu);
     }
-    
+
+    public Menu updateMenu(Long menuId, Menu menuDetails) {
+        if (repository.existsById(menuId)) {
+            menuDetails.setId(menuId);
+
+            return repository.save(menuDetails);
+        } else {
+            throw new EntityNotFoundException("Menu with id: " + menuId + " not found");
+        }
+    }
+
+    public void deleteMenu(Long menuId) {
+        if (repository.existsById(menuId)) {
+            repository.deleteById(menuId);
+        } else {
+            throw new EntityNotFoundException("Menu with id: " + menuId + " not found");
+        }
+    }
+
 }
