@@ -1,6 +1,5 @@
 package ch.noseryoung.restaurantbackend.service;
 
-import ch.noseryoung.restaurantbackend.model.Menu;
 import ch.noseryoung.restaurantbackend.model.Reservation;
 import ch.noseryoung.restaurantbackend.repository.ReservationRepository;
 import jakarta.persistence.EntityNotFoundException;

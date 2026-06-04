@@ -1,11 +1,16 @@
 package ch.noseryoung.restaurantbackend.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.DynamicUpdate;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Entity
 @Getter @Setter
@@ -27,10 +32,14 @@ public class Menu {
     private String description;
 
     @NotNull(message = "Price is required")
-    @Positive(message = "Price must be greater than zero")
-    @Column(nullable = false)
-    private double price;
+    @DecimalMin(value = "0.05", inclusive = true, message = "Price must be at least 0.05")
+    @Digits(integer = 6, fraction = 2, message = "Price must have at most 2 decimal places")
+    @Column(nullable = false, precision = 8, scale = 2)
+    private BigDecimal price;
 
+    @NotBlank(message = "Category is required")
+    @Size(max = 50, message = "Category must be under 50 characters")
+    @Column(nullable = false, length = 50)
     private String category;
     private boolean chefChoice;
 
@@ -39,5 +48,21 @@ public class Menu {
     private boolean containsNuts;
     private boolean vegan;
     private boolean vegetarian;
+
+    @JsonIgnore
+    @AssertTrue(message = "Price must be in 0.05 steps")
+    public boolean isPriceInFiveCentSteps() {
+        if (price == null) {
+            return true;
+        }
+        try {
+            BigDecimal scaled = price.setScale(2, RoundingMode.UNNECESSARY);
+            return scaled.movePointRight(2)
+                    .remainder(new BigDecimal("5"))
+                    .compareTo(BigDecimal.ZERO) == 0;
+        } catch (ArithmeticException ex) {
+            return false;
+        }
+    }
 
 }
