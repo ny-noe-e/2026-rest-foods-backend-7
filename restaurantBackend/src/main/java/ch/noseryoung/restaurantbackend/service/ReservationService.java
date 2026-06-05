@@ -3,16 +3,16 @@ package ch.noseryoung.restaurantbackend.service;
 import ch.noseryoung.restaurantbackend.model.Reservation;
 import ch.noseryoung.restaurantbackend.repository.ReservationRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ReservationService {
 
-    @Autowired
-    private ReservationRepository repository;
+    private final ReservationRepository repository;
 
     public List<Reservation> getAllReservations() {
         return repository.findAll();
@@ -43,5 +43,4 @@ public class ReservationService {
             throw new EntityNotFoundException("Reservation with id: " + reservationId + " not found");
         }
     }
-
 }

@@ -3,21 +3,20 @@ package ch.noseryoung.restaurantbackend.service;
 import ch.noseryoung.restaurantbackend.model.Menu;
 import ch.noseryoung.restaurantbackend.repository.MenuRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MenuService {
 
-    @Autowired
-    private MenuRepository repository;
+    private final MenuRepository repository;
 
-    public List<Menu> getAllMenus() {
-        return repository.findAll();
+    public List<Menu> getMenusByDietaryFilters(Boolean vegan, Boolean vegetarian, Boolean lactoseFree, Boolean glutenFree) {
+        return repository.findByDietaryFilters(vegan, vegetarian, lactoseFree, glutenFree);
     }
-
 
     public Menu getMenuById(Long menuId) {
         return repository.findById(menuId).orElseThrow(() -> new EntityNotFoundException("Menu with id: " + menuId + " not found"));
@@ -44,6 +43,4 @@ public class MenuService {
             throw new EntityNotFoundException("Menu with id: " + menuId + " not found");
         }
     }
-
-
 }
