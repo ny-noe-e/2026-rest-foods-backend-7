@@ -16,6 +16,9 @@ VALUES ('Steak Tartare', 'Hand-cut beef tenderloin with capers, shallots, mustar
 INSERT INTO menu (menu_name, description, price, category, chef_choice, gluten_free, lactose_free, contains_nuts, vegan, vegetarian)
 VALUES ('Wagyu Beef Burger', 'Juicy wagyu beef patty with aged cheddar, caramelized onions and steakhouse sauce.', 32.50, 'Beef Classics', false, false, false, false, false, false);
 
+INSERT INTO menu (menu_name, description, price, category, chef_choice, gluten_free, lactose_free, contains_nuts, vegan, vegetarian)
+VALUES ('Large salad', 'Large mixed salad with italian dressing', '15.00', 'Vegetarian maincourse', false, false, true, false, true, true);
+
 INSERT INTO reservation (customer_name, phone_number, number_of_persons, reserved_from, reserved_to, table_id)
 VALUES ('Lukas Steiner', '+41791234567', 4, '2026-06-15 18:30:00', '2026-06-15 20:30:00', 'T-03');
 
