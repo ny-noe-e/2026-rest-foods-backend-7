@@ -17,9 +17,9 @@ public class ReservationService {
     public List<Reservation> getAllReservations() {
         return repository.findAll();
     }
-    public  Reservation getReservationById(Long reservationId) {
-        return repository.findById(reservationId)
-                .orElseThrow(() -> new EntityNotFoundException("Reservation with id: " + reservationId + " not found"));
+
+    public Reservation getReservationById(Long reservationId) {
+        return repository.findById(reservationId).orElseThrow(() -> new EntityNotFoundException("Reservation with id: " + reservationId + " not found"));
     }
 
     public Reservation createReservation(Reservation reservation) {

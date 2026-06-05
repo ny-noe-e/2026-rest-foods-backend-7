@@ -24,10 +24,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    public AuthController(
-            AuthenticationManager authenticationManager,
-            JwtService jwtService
-    ) {
+    public AuthController(AuthenticationManager authenticationManager, JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
     }
@@ -35,19 +32,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.username(), request.password())
-            );
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
             String token = jwtService.generateToken(authentication.getName(), authentication.getAuthorities());
             String role = extractPrimaryRole(authentication.getAuthorities());
 
-            return ResponseEntity.ok(new LoginResponse(
-                    token,
-                    "Bearer",
-                    jwtService.getExpirationTimeMs(),
-                    role
-            ));
+            return ResponseEntity.ok(new LoginResponse(token, "Bearer", jwtService.getExpirationTimeMs(), role));
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -62,17 +52,9 @@ public class AuthController {
         return "ROLE_USER";
     }
 
-    public record LoginRequest(
-            @NotBlank String username,
-            @NotBlank String password
-    ) {
+    public record LoginRequest(@NotBlank String username, @NotBlank String password) {
     }
 
-    public record LoginResponse(
-            String token,
-            String tokenType,
-            long expiresInMs,
-            String role
-    ) {
+    public record LoginResponse(String token, String tokenType, long expiresInMs, String role) {
     }
 }

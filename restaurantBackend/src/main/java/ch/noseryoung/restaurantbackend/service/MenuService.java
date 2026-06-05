@@ -18,9 +18,9 @@ public class MenuService {
         return repository.findAll();
     }
 
-    public  Menu getMenuById(Long menuId) {
-        return repository.findById(menuId)
-                .orElseThrow(() -> new EntityNotFoundException("Menu with id: " + menuId + " not found"));
+
+    public Menu getMenuById(Long menuId) {
+        return repository.findById(menuId).orElseThrow(() -> new EntityNotFoundException("Menu with id: " + menuId + " not found"));
     }
 
     public Menu createMenu(Menu menu) {

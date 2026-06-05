@@ -1,4 +1,5 @@
 package ch.noseryoung.restaurantbackend.model;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
@@ -13,7 +14,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Menu {
@@ -57,9 +59,7 @@ public class Menu {
         }
         try {
             BigDecimal scaled = price.setScale(2, RoundingMode.UNNECESSARY);
-            return scaled.movePointRight(2)
-                    .remainder(new BigDecimal("5"))
-                    .compareTo(BigDecimal.ZERO) == 0;
+            return scaled.movePointRight(2).remainder(new BigDecimal("5")).compareTo(BigDecimal.ZERO) == 0;
         } catch (ArithmeticException ex) {
             return false;
         }

@@ -21,10 +21,7 @@ public class JwtService {
     private final Key secretKey;
     private final long expirationTimeMs;
 
-    public JwtService(
-            @Value("${app.security.jwt-secret}") String base64Secret,
-            @Value("${app.security.jwt-expiration-ms:86400000}") long expirationTimeMs
-    ) {
+    public JwtService(@Value("${app.security.jwt-secret}") String base64Secret, @Value("${app.security.jwt-expiration-ms:86400000}") long expirationTimeMs) {
         byte[] keyBytes = Decoders.BASE64.decode(base64Secret);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
         this.expirationTimeMs = expirationTimeMs;
@@ -34,13 +31,7 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", extractPrimaryRole(authorities));
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTimeMs))
-                .signWith(secretKey)
-                .compact();
+        return Jwts.builder().setClaims(claims).setSubject(username).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + expirationTimeMs)).signWith(secretKey).compact();
     }
 
     public String extractUsername(String token) {
@@ -64,11 +55,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
     }
 
     private String extractPrimaryRole(Iterable<? extends GrantedAuthority> authorities) {

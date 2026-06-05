@@ -35,13 +35,7 @@ public class SecurityConfig {
     private final String adminPassword;
     private final String adminRole;
 
-    public SecurityConfig(
-            JwtAuthFilter jwtAuthFilter,
-            @Value("${app.security.admin-prefix}") String adminPrefix,
-            @Value("${app.security.admin-username}") String adminUsername,
-            @Value("${app.security.admin-password}") String adminPassword,
-            @Value("${app.security.admin-role:ADMIN}") String adminRole
-    ) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, @Value("${app.security.admin-prefix}") String adminPrefix, @Value("${app.security.admin-username}") String adminUsername, @Value("${app.security.admin-password}") String adminPassword, @Value("${app.security.admin-role:ADMIN}") String adminRole) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.adminPrefix = adminPrefix;
         this.adminUsername = adminUsername;
@@ -54,26 +48,7 @@ public class SecurityConfig {
         String normalizedAdminPrefix = normalizePrefix(adminPrefix);
         String adminLoginPath = normalizedAdminPrefix + "/auth/login";
 
-        return http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/menus/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/reservations/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/reservations").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/menus").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PUT, "/menus/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.DELETE, "/menus/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PUT, "/reservations/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.DELETE, "/reservations/**").hasRole("ADMIN")
-                        .requestMatchers(adminLoginPath).permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(entryPoint))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+        return http.csrf(csrf -> csrf.disable()).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests(auth -> auth.requestMatchers("/").permitAll().requestMatchers(HttpMethod.GET, "/menus/**").permitAll().requestMatchers(HttpMethod.GET, "/reservations/**").permitAll().requestMatchers(HttpMethod.POST, "/reservations").permitAll().requestMatchers(HttpMethod.POST, "/menus").hasRole("ADMIN").requestMatchers(HttpMethod.PUT, "/menus/**").hasRole("ADMIN").requestMatchers(HttpMethod.DELETE, "/menus/**").hasRole("ADMIN").requestMatchers(HttpMethod.PUT, "/reservations/**").hasRole("ADMIN").requestMatchers(HttpMethod.DELETE, "/reservations/**").hasRole("ADMIN").requestMatchers(adminLoginPath).permitAll().requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated()).exceptionHandling(ex -> ex.authenticationEntryPoint(entryPoint)).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
     @Bean
@@ -83,11 +58,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails adminUser = User.builder()
-                .username(adminUsername)
-                .password(passwordEncoder.encode(adminPassword))
-                .roles(adminRole)
-                .build();
+        UserDetails adminUser = User.builder().username(adminUsername).password(passwordEncoder.encode(adminPassword)).roles(adminRole).build();
 
         return new InMemoryUserDetailsManager(adminUser);
     }
