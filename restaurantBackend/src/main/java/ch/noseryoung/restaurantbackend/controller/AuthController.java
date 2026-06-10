@@ -1,5 +1,6 @@
 package ch.noseryoung.restaurantbackend.controller;
 
+import ch.noseryoung.restaurantbackend.config.AdminSecurityProperties;
 import ch.noseryoung.restaurantbackend.config.JwtService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -18,21 +19,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("${app.security.admin-prefix}/auth")
+@RequestMapping("${app.security.admin-prefix}")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final AdminSecurityProperties adminSecurityProperties;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtService jwtService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtService jwtService, AdminSecurityProperties adminSecurityProperties) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.adminSecurityProperties = adminSecurityProperties;
     }
 
-    @PostMapping("/login")
+    @PostMapping({"", "/login"})
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(resolveUsername(request.username()), request.password()));
 
             String token = jwtService.generateToken(authentication.getName(), authentication.getAuthorities());
             String role = extractPrimaryRole(authentication.getAuthorities());
@@ -41,6 +44,13 @@ public class AuthController {
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    private String resolveUsername(String username) {
+        if (username == null || username.isBlank()) {
+            return adminSecurityProperties.getAdminUsername();
+        }
+        return username;
     }
 
     private String extractPrimaryRole(Collection<? extends GrantedAuthority> authorities) {
@@ -52,7 +62,7 @@ public class AuthController {
         return "ROLE_USER";
     }
 
-    public record LoginRequest(@NotBlank String username, @NotBlank String password) {
+    public record LoginRequest(String username, @NotBlank String password) {
     }
 
     public record LoginResponse(String token, String tokenType, long expiresInMs, String role) {
