@@ -25,18 +25,23 @@ import java.util.Collections;
 public class JWTAuthenticatior {
     private final LoginService loginService;
     private final JwtService jwtService;
-    @GetMapping("/JWTGen")
+    @PostMapping("/JWTGen")
     public ResponseEntity<String> GetJWT(@Valid @RequestBody Users data){
-        System.out.println("User");
-        String usern = data.getUsername();
-        String passw = data.getPassword();
-        if (loginService.authenticate(passw,usern)){
-            System.out.println("user Found");
-            GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
-            return ResponseEntity.ok().body(jwtService.generateToken(usern, Collections.emptyList()));
-        }else{
-            System.out.println("user Not Found");
-            return ResponseEntity.badRequest().body("Invalid Username or Password");
+        try{
+            System.out.println("User");
+            String usern = data.getUsername();
+            String passw = data.getPassword();
+            if (loginService.authenticate(passw,usern)){
+                System.out.println("user Found");
+                GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
+                return ResponseEntity.ok().body(jwtService.generateToken(usern, Collections.emptyList()));
+            }else{
+                System.out.println("user Not Found");
+                return ResponseEntity.badRequest().body("Invalid Username or Password");
+            }
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Failed Request");
         }
+
     }
 }

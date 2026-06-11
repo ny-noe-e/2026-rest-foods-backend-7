@@ -12,9 +12,10 @@ public class LoginService {
     private final LoginRepository Repo;
 
     public boolean authenticate(String psw,String user){
-        if (Repo.isUserValid(user,psw)){
-            return true;
-        }
-        return false;
+        return Repo.isUserValid(user,psw);
+    }
+
+    public boolean doesUserExist(String user){
+        return Repo.doesUserExist(user);
     }
 }
