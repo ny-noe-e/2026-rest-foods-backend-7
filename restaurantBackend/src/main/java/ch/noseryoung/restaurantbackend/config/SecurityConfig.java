@@ -38,12 +38,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationEntryPoint entryPoint) throws Exception {
-        String normalizedAdminPrefix = normalizePrefix(adminSecurityProperties.getAdminPrefix());
-        String adminLoginPath = normalizedAdminPrefix;
-        String adminLoginSubPath = normalizedAdminPrefix + "/login";
+        http
+                // Disable CSRF protection (necessary for testing POST/GET with bodies via Postman)
+                .csrf(csrf -> csrf.disable())
 
-        return http.csrf(csrf -> csrf.disable()).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests(auth -> auth.requestMatchers("/").permitAll().requestMatchers(HttpMethod.GET, "/menus/**").permitAll().requestMatchers(HttpMethod.GET, "/reservations/**").permitAll().requestMatchers(HttpMethod.POST, "/reservations").permitAll().requestMatchers(HttpMethod.POST, "/menus").hasRole("ADMIN").requestMatchers(HttpMethod.PUT, "/menus/**").hasRole("ADMIN").requestMatchers(HttpMethod.DELETE, "/menus/**").hasRole("ADMIN").requestMatchers(HttpMethod.PUT, "/reservations/**").hasRole("ADMIN").requestMatchers(HttpMethod.DELETE, "/reservations/**").hasRole("ADMIN").requestMatchers(HttpMethod.GET, adminLoginPath, adminLoginSubPath).permitAll().requestMatchers(HttpMethod.POST, adminLoginPath, adminLoginSubPath).permitAll().requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated()).exceptionHandling(ex -> ex.authenticationEntryPoint(entryPoint)).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
-    }
+                // Permit ALL requests to go through without authentication
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
+                );
+
+        return http.build();   }
 
     @Bean
     public AuthenticationEntryPoint restAuthenticationEntryPoint() {

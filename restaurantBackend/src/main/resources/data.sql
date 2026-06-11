@@ -47,3 +47,6 @@ VALUES ('Anna Weber', '+41795550844', 3, '2026-06-18 18:00:00', '2026-06-18 20:0
 
 INSERT INTO reservation (customer_name, phone_number, number_of_persons, reserved_from, reserved_to, table_id)
 VALUES ('David Rossi', '+41764443322', 5, '2026-06-19 20:15:00', '2026-06-19 22:15:00', 'T-03');
+
+INSERT  INTO users (Username , Password)
+VALUES ('Michi' , 'Michi00')
